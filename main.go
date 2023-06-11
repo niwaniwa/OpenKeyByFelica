@@ -16,6 +16,7 @@ var (
 	managePWMPin rpio.Pin
 	isOpenKey    bool
 	lock         bool = false
+	isUsed       bool = false
 )
 
 const (
@@ -35,8 +36,12 @@ func main() {
 
 	for {
 		// sudoしないと動かないので注意
+		if isUsed {
+			continue
+		}
 		idm, err := pasori.GetID(VID, PID)
 		if err != nil {
+			continue
 		}
 		if Contains(userData, idm) {
 			if isOpenKey {
@@ -102,18 +107,19 @@ func CloseKey() {
 
 func initializeRestApiServer() {
 	router := gin.Default()
-	router.GET("/users", getUsers)
-	router.POST("/users", postUsers)
+	router.GET("/user", getUser)
+	router.POST("/user", postUser)
 	go router.Run("localhost:8080")
 	//go router.Run("localhost:8080")
 }
 
-func getUsers(c *gin.Context) {
+func getUser(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, userData)
 }
 
-func postUsers(c *gin.Context) {
+func postUser(c *gin.Context) {
 	fmt.Println("Start Register User")
+	isUsed = true
 	idm, err := pasori.GetID(VID, PID)
 	if err != nil {
 		panic(err)
@@ -130,4 +136,5 @@ func postUsers(c *gin.Context) {
 	userData = append(userData, user)
 	fmt.Println("End Register User")
 	c.IndentedJSON(http.StatusCreated, user)
+	isUsed = false
 }
