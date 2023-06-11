@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -86,6 +87,7 @@ func SaveUserDatum(array []User) {
 
 func SaveUserData(data User) {
 	log.Printf("-:-: Save user file...")
+	log.Printf(strconv.FormatBool(Exists(rootPath + data.ID + ".json")))
 	file, _ := os.Create(rootPath + data.ID + ".json")
 	defer file.Close()
 	_ = json.NewEncoder(file).Encode(data)
@@ -99,4 +101,9 @@ func Contains(s []User, idm []byte) bool {
 		}
 	}
 	return false
+}
+
+func Exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
 }

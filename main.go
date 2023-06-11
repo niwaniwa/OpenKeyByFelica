@@ -83,6 +83,8 @@ func initialize() {
 
 	////////////////// SERVO
 
+	_ = os.MkdirAll("data", 0755)
+
 	fmt.Println("-: -: Servo setup...")
 	err := rpio.Open()
 	if err != nil {
