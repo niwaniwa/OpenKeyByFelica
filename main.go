@@ -42,8 +42,10 @@ func main() {
 			continue
 		}
 
+		log.Println(idm)
+
 		if isRegister {
-			fmt.Println("Start Register User")
+			log.Println("Start Register User")
 			id, _ := uuid.NewUUID()
 			user := User{
 				ID:          id.String(),
@@ -52,9 +54,11 @@ func main() {
 				LastLogging: "",
 				StNum:       "",
 			}
+			SaveUserData(user)
 			userData = append(userData, user)
-			fmt.Println("End Register User")
+			log.Println("End Register User")
 			isRegister = false
+
 			continue
 		}
 
