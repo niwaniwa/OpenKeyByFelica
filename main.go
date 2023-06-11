@@ -58,7 +58,7 @@ func main() {
 			userData = append(userData, user)
 			log.Println("End Register User")
 			isRegister = false
-
+			time.Sleep(1000 * time.Millisecond)
 			continue
 		}
 

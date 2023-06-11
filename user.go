@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -33,6 +34,8 @@ func ReadUserData() bool {
 		userData = debugUserData
 		return false
 	}
+
+	log.Printf("-:-:-: Start read files...")
 
 	var raw []User
 
@@ -67,11 +70,9 @@ func ReadUserData() bool {
 
 	userData = raw
 
+	log.Printf("files %s", len(userData))
+
 	return true
-
-}
-
-func RegisterUser(name string, stNum string) {
 
 }
 
@@ -84,9 +85,11 @@ func SaveUserDatum(array []User) {
 }
 
 func SaveUserData(data User) {
+	log.Printf("-:-: Save user file...")
 	file, _ := os.Create(rootPath + data.ID + ".json")
 	defer file.Close()
 	_ = json.NewEncoder(file).Encode(data)
+	log.Printf("-:-: End save processs")
 }
 
 func Contains(s []User, idm []byte) bool {
