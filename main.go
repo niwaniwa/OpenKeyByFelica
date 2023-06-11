@@ -15,8 +15,9 @@ import (
 var (
 	managePWMPin rpio.Pin
 	isOpenKey    bool
-	lock         bool = false
-	isUsed       bool = false
+	lock         bool   = false
+	isRegister   bool   = false
+	tempName     string = ""
 )
 
 const (
@@ -36,13 +37,27 @@ func main() {
 
 	for {
 		// sudoしないと動かないので注意
-		if isUsed {
-			continue
-		}
 		idm, err := pasori.GetID(VID, PID)
 		if err != nil {
 			continue
 		}
+
+		if isRegister {
+			fmt.Println("Start Register User")
+			id, _ := uuid.NewUUID()
+			user := User{
+				ID:          id.String(),
+				IDM:         idm,
+				Name:        tempName,
+				LastLogging: "",
+				StNum:       "",
+			}
+			userData = append(userData, user)
+			fmt.Println("End Register User")
+			isRegister = false
+			continue
+		}
+
 		if Contains(userData, idm) {
 			if isOpenKey {
 				CloseKey()
@@ -118,23 +133,7 @@ func getUser(c *gin.Context) {
 }
 
 func postUser(c *gin.Context) {
-	fmt.Println("Start Register User")
-	isUsed = true
-	idm, err := pasori.GetID(VID, PID)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(idm)
-	id, _ := uuid.NewUUID()
-	user := User{
-		ID:          id.String(),
-		IDM:         idm,
-		Name:        c.Params.ByName("name"),
-		LastLogging: "",
-		StNum:       "",
-	}
-	userData = append(userData, user)
-	fmt.Println("End Register User")
-	c.IndentedJSON(http.StatusCreated, user)
-	isUsed = false
+	isRegister = true
+	tempName = c.Params.ByName("name")
+	c.IndentedJSON(http.StatusOK, tempName)
 }
