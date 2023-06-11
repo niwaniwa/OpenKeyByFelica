@@ -92,6 +92,7 @@ func initialize() {
 	managePWMPin.Mode(rpio.Pwm)
 	managePWMPin.Freq(50 * 100)
 	managePWMPin.DutyCycle(0, 100)
+	managePWMPin.Low()
 	fmt.Println("-: -: END Servo setup")
 
 	////////////////// PASORI
@@ -107,18 +108,22 @@ func initialize() {
 
 func OpenKey() {
 	lock = true
+	managePWMPin.High()
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
+	managePWMPin.Low()
 	isOpenKey = true
 }
 
 func CloseKey() {
+	managePWMPin.High()
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(50-i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
+	managePWMPin.Low()
 	isOpenKey = false
 }
 
