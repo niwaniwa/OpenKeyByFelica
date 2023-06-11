@@ -31,11 +31,6 @@ var (
 )
 
 func ReadUserData() bool {
-	if Debug {
-		userData = debugUserData
-		return false
-	}
-
 	log.Printf("-:-:-: Start read files...")
 
 	var raw []User

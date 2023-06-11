@@ -58,7 +58,7 @@ func main() {
 			userData = append(userData, user)
 			log.Println("End Register User")
 			isRegister = false
-			time.Sleep(1000 * time.Millisecond)
+			time.Sleep(5000 * time.Millisecond)
 			continue
 		}
 
@@ -69,11 +69,7 @@ func main() {
 				OpenKey()
 			}
 		}
-		if isOpenKey {
-			CloseKey()
-		} else {
-			OpenKey()
-		}
+
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
