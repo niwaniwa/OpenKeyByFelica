@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/bamchoh/pasori"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stianeikeland/go-rpio/v4"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -85,7 +85,7 @@ func initialize() {
 
 func OpenKey() {
 	lock = true
-	for i := 1; i <= 50; i++ {
+	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
@@ -93,7 +93,7 @@ func OpenKey() {
 }
 
 func CloseKey() {
-	for i := 1; i <= 50; i++ {
+	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(50-i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
@@ -119,8 +119,9 @@ func postUsers(c *gin.Context) {
 		panic(err)
 	}
 	fmt.Println(idm)
+	id, _ := uuid.NewUUID()
 	user := User{
-		ID:          strconv.Itoa(len(userData) + 1),
+		ID:          id.String(),
 		IDM:         idm,
 		Name:        c.Params.ByName("name"),
 		LastLogging: "",

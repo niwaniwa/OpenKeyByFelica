@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/bamchoh/pasori v0.0.0-20190321133732-ca188cfb16ba
 	github.com/gin-gonic/gin v1.8.1
+	github.com/google/uuid v1.3.0
 	github.com/stianeikeland/go-rpio/v4 v4.6.0
 
 )
