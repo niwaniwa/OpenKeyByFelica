@@ -91,6 +91,7 @@ func initialize() {
 	}
 
 	manageMosPin = rpio.Pin(MosPin)
+	manageMosPin.Output()
 	manageMosPin.Low()
 	managePWMPin = rpio.Pin(PwmPin) // SEIGYO OUT PUT PIN
 	managePWMPin.Mode(rpio.Pwm)
