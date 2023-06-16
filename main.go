@@ -14,6 +14,7 @@ import (
 
 var (
 	managePWMPin rpio.Pin
+	manageMosPin rpio.Pin
 	isOpenKey    bool
 	lock         bool   = false
 	isRegister   bool   = false
@@ -23,6 +24,7 @@ var (
 const (
 	DebugLogPrefix        = "[DEBUG]"
 	PwmPin                = 13
+	MosPin				  = 17
 	VID            uint16 = 0x054C // SONY
 	PID            uint16 = 0x06C1 // RC-S380
 	Debug                 = true
@@ -88,6 +90,8 @@ func initialize() {
 		os.Exit(1)
 	}
 
+	manageMosPin = rpio.Pin(MosPin)
+	manageMosPin.Low()
 	managePWMPin = rpio.Pin(PwmPin) // SEIGYO OUT PUT PIN
 	managePWMPin.Mode(rpio.Pwm)
 	managePWMPin.Freq(50 * 100)
@@ -108,22 +112,26 @@ func initialize() {
 
 func OpenKey() {
 	lock = true
+	manageMosPin.High()
 	managePWMPin.High()
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
 	managePWMPin.Low()
+	manageMosPin.Low()
 	isOpenKey = true
 }
 
 func CloseKey() {
+	manageMosPin.High()
 	managePWMPin.High()
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(50-i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
 	managePWMPin.Low()
+	manageMosPin.Low()
 	isOpenKey = false
 }
 
