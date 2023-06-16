@@ -115,6 +115,9 @@ func OpenKey() {
 	lock = true
 	manageMosPin.High()
 	managePWMPin.High()
+
+	time.Sleep(500 * time.Millisecond)
+
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(i), 100)
 		time.Sleep(10 * time.Millisecond)
@@ -131,6 +134,7 @@ func OpenKey() {
 func CloseKey() {
 	manageMosPin.High()
 	managePWMPin.High()
+	time.Sleep(500 * time.Millisecond)
 	for i := 1; i <= 60; i++ {
 		managePWMPin.DutyCycle(uint32(50-i), 100)
 		time.Sleep(10 * time.Millisecond)
