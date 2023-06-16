@@ -47,7 +47,7 @@ func main() {
 		log.Println(idm)
 
 		if isRegister {
-			log.Println("Start Register User")
+			log.Println("Start Register User #" + tempName)
 			id, _ := uuid.NewUUID()
 			user := User{
 				ID:          id.String(),
@@ -72,7 +72,7 @@ func main() {
 			}
 		}
 
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(2000 * time.Millisecond)
 	}
 }
 
@@ -90,7 +90,7 @@ func initialize() {
 		os.Exit(1)
 	}
 
-	manageMosPin = rpio.Pin(MosPin)
+	manageMosPin = rpio.Pin(MosPin) // MOS SEIGYO OUT PUT PIN
 	manageMosPin.Output()
 	manageMosPin.Low()
 	managePWMPin = rpio.Pin(PwmPin) // SEIGYO OUT PUT PIN
@@ -119,8 +119,12 @@ func OpenKey() {
 		managePWMPin.DutyCycle(uint32(i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
-	managePWMPin.Low()
-	manageMosPin.Low()
+
+	go func() {
+		time.Sleep(1000 * time.Millisecond)
+		managePWMPin.Low()
+		manageMosPin.Low()
+	}()
 	isOpenKey = true
 }
 
@@ -131,8 +135,11 @@ func CloseKey() {
 		managePWMPin.DutyCycle(uint32(50-i), 100)
 		time.Sleep(10 * time.Millisecond)
 	}
-	managePWMPin.Low()
-	manageMosPin.Low()
+	go func() {
+		time.Sleep(1000 * time.Millisecond)
+		managePWMPin.Low()
+		manageMosPin.Low()
+	}()
 	isOpenKey = false
 }
 
