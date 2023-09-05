@@ -13,18 +13,21 @@ import (
 )
 
 var (
-	managePWMPin rpio.Pin
-	manageMosPin rpio.Pin
-	isOpenKey    bool
-	lock         bool   = false
-	isRegister   bool   = false
-	tempName     string = ""
+	managePWMPin    rpio.Pin
+	manageMosPin    rpio.Pin
+	manageSwPin     rpio.Pin
+	isOpenKey       bool
+	lock            bool   = false
+	isRegister      bool   = false
+	isCloseProgress bool   = false
+	tempName        string = ""
 )
 
 const (
 	DebugLogPrefix        = "[DEBUG]"
 	PwmPin                = 13
-	MosPin				  = 17
+	MosPin                = 17
+	SwPin                 = 18
 	VID            uint16 = 0x054C // SONY
 	PID            uint16 = 0x06C1 // RC-S380
 	Debug                 = true
@@ -72,7 +75,20 @@ func main() {
 			}
 		}
 
-		time.Sleep(2000 * time.Millisecond)
+		if manageSwPin.Read() == 0 {
+			if !isCloseProgress {
+				isCloseProgress = true
+				time.AfterFunc(5*time.Second, func() {
+					isCloseProgress = false
+					if manageSwPin.Read() == 0 {
+						CloseKey()
+						log.Println(":: Closed Door")
+					}
+				})
+			}
+		}
+
+		time.Sleep(1000 * time.Millisecond)
 	}
 }
 
@@ -100,8 +116,15 @@ func initialize() {
 	managePWMPin.Low()
 	fmt.Println("-: -: END Servo setup")
 
-	////////////////// PASORI
+	////////////////// SWITCH
+	fmt.Println("-: -: switch setup...")
 
+	manageSwPin = rpio.Pin(SwPin)
+	manageSwPin.Input()
+	manageSwPin.PullUp()
+	manageSwPin.Detect(rpio.FallEdge)
+
+	////////////////// PASORI
 	fmt.Println("-: -: IDM Read setup...")
 
 	// 登録されているIDM読み取り処理
