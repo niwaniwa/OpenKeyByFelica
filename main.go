@@ -40,6 +40,8 @@ func main() {
 
 	initializeRestApiServer()
 
+	go checkDoorState()
+
 	for {
 		// sudoしないと動かないので注意
 		idm, err := pasori.GetID(VID, PID)
@@ -72,19 +74,6 @@ func main() {
 				CloseKey()
 			} else {
 				OpenKey()
-			}
-		}
-
-		if manageSwPin.Read() == 0 {
-			if !isCloseProgress {
-				isCloseProgress = true
-				time.AfterFunc(5*time.Second, func() {
-					isCloseProgress = false
-					if manageSwPin.Read() == 0 {
-						CloseKey()
-						log.Println(":: Closed Door")
-					}
-				})
 			}
 		}
 
@@ -186,4 +175,23 @@ func postUser(c *gin.Context) {
 	isRegister = true
 	tempName = c.Params.ByName("name")
 	c.IndentedJSON(http.StatusOK, tempName)
+}
+
+func checkDoorState() {
+	log.Println(manageSwPin.Read())
+	if manageSwPin.EdgeDetected() {
+		log.Println(":: switch active")
+		if !isCloseProgress {
+			isCloseProgress = true
+			time.AfterFunc(5*time.Second, func() {
+				isCloseProgress = false
+				if manageSwPin.Read() == 0 {
+					if isOpenKey {
+						CloseKey()
+						log.Println(":: Closed Door")
+					}
+				}
+			})
+		}
+	}
 }
