@@ -178,20 +178,23 @@ func postUser(c *gin.Context) {
 }
 
 func checkDoorState() {
-	log.Println(manageSwPin.Read())
-	if manageSwPin.EdgeDetected() {
-		log.Println(":: switch active")
-		if !isCloseProgress {
-			isCloseProgress = true
-			time.AfterFunc(5*time.Second, func() {
-				isCloseProgress = false
-				if manageSwPin.Read() == 0 {
-					if isOpenKey {
-						CloseKey()
-						log.Println(":: Closed Door")
+	for {
+		log.Println(manageSwPin.Read())
+		if manageSwPin.EdgeDetected() {
+			log.Println(":: switch active")
+			if !isCloseProgress {
+				isCloseProgress = true
+				time.AfterFunc(5*time.Second, func() {
+					isCloseProgress = false
+					if manageSwPin.Read() == 0 {
+						if isOpenKey {
+							CloseKey()
+							log.Println(":: Closed Door")
+						}
 					}
-				}
-			})
+				})
+			}
 		}
+		time.Sleep(500 * time.Millisecond)
 	}
 }
