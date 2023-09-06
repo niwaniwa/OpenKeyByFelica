@@ -111,7 +111,7 @@ func initialize() {
 	manageSwPin = rpio.Pin(SwPin)
 	manageSwPin.Input()
 	manageSwPin.PullUp()
-	manageSwPin.Detect(rpio.FallEdge)
+	//manageSwPin.Detect(rpio.FallEdge)
 
 	////////////////// PASORI
 	fmt.Println("-: -: IDM Read setup...")
@@ -180,7 +180,7 @@ func postUser(c *gin.Context) {
 func checkDoorState() {
 	for {
 		log.Println(manageSwPin.Read())
-		if manageSwPin.EdgeDetected() {
+		if manageSwPin.Read() == 0 {
 			log.Println(":: switch active")
 			if !isCloseProgress {
 				isCloseProgress = true
@@ -195,6 +195,6 @@ func checkDoorState() {
 				})
 			}
 		}
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(1 * time.Second)
 	}
 }
