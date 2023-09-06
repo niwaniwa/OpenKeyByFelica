@@ -179,9 +179,7 @@ func postUser(c *gin.Context) {
 
 func checkDoorState() {
 	for {
-		log.Println(manageSwPin.Read())
 		if manageSwPin.Read() == 0 {
-			log.Println(":: switch active")
 			if !isCloseProgress {
 				isCloseProgress = true
 				time.AfterFunc(5*time.Second, func() {
