@@ -22,3 +22,19 @@ Rapsberry Pi + Goを使用したスマートロックリポジトリです。
   - PwmPin: `13`
   - MosPin: `17`
   - SwPin : `18`
+
+## 起動方法
+```terminal
+// ビルド
+$ go build
+
+// 起動
+$ sudo nohup ./OpenKeyFelica > output.log 2>&1 &
+
+// 停止
+// IDチェック
+$ ps x
+// IDを指定して削除
+$ kill target_pid
+
+```
