@@ -11,6 +11,14 @@ Rapsberry Pi + Goを使用したスマートロックリポジトリです。
 - Sony RC-S380
 - リードスイッチ
 - サーボモーター SG92R
+- Nch MOSFET TK7R4A10PL
 
 ## 機能
 - icカードを用いてドアの開閉を行います。
+
+## 接続方法
+### 使用pin
+- GPIO
+  - PwmPin: `13`
+  - MosPin: `17`
+  - SwPin : `18`
