@@ -13,18 +13,21 @@ import (
 )
 
 var (
-	managePWMPin rpio.Pin
-	manageMosPin rpio.Pin
-	isOpenKey    bool
-	lock         bool   = false
-	isRegister   bool   = false
-	tempName     string = ""
+	managePWMPin    rpio.Pin
+	manageMosPin    rpio.Pin
+	manageSwPin     rpio.Pin
+	isOpenKey       bool
+	lock            bool   = false
+	isRegister      bool   = false
+	isCloseProgress bool   = false
+	tempName        string = ""
 )
 
 const (
 	DebugLogPrefix        = "[DEBUG]"
 	PwmPin                = 13
-	MosPin				  = 17
+	MosPin                = 17
+	SwPin                 = 18
 	VID            uint16 = 0x054C // SONY
 	PID            uint16 = 0x06C1 // RC-S380
 	Debug                 = true
@@ -36,6 +39,8 @@ func main() {
 	initialize()
 
 	initializeRestApiServer()
+
+	go checkDoorState()
 
 	for {
 		// sudoしないと動かないので注意
@@ -100,8 +105,15 @@ func initialize() {
 	managePWMPin.Low()
 	fmt.Println("-: -: END Servo setup")
 
-	////////////////// PASORI
+	////////////////// SWITCH
+	fmt.Println("-: -: switch setup...")
 
+	manageSwPin = rpio.Pin(SwPin)
+	manageSwPin.Input()
+	manageSwPin.PullUp()
+	//manageSwPin.Detect(rpio.FallEdge)
+
+	////////////////// PASORI
 	fmt.Println("-: -: IDM Read setup...")
 
 	// 登録されているIDM読み取り処理
@@ -163,4 +175,24 @@ func postUser(c *gin.Context) {
 	isRegister = true
 	tempName = c.Params.ByName("name")
 	c.IndentedJSON(http.StatusOK, tempName)
+}
+
+func checkDoorState() {
+	for {
+		if manageSwPin.Read() == 0 {
+			if !isCloseProgress {
+				isCloseProgress = true
+				time.AfterFunc(5*time.Minute, func() {
+					isCloseProgress = false
+					if manageSwPin.Read() == 0 {
+						if isOpenKey {
+							CloseKey()
+							log.Println(":: Closed Door")
+						}
+					}
+				})
+			}
+		}
+		time.Sleep(1 * time.Second)
+	}
 }
