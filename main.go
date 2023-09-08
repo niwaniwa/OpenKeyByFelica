@@ -77,7 +77,7 @@ func main() {
 			}
 		}
 
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(2000 * time.Millisecond)
 	}
 }
 
@@ -182,7 +182,7 @@ func checkDoorState() {
 		if manageSwPin.Read() == 0 {
 			if !isCloseProgress {
 				isCloseProgress = true
-				time.AfterFunc(5*time.Second, func() {
+				time.AfterFunc(5*time.Minute, func() {
 					isCloseProgress = false
 					if manageSwPin.Read() == 0 {
 						if isOpenKey {
