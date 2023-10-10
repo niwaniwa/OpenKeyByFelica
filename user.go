@@ -98,6 +98,15 @@ func Contains(s []User, idm []byte) bool {
 	return false
 }
 
+func findUser(s []User, idm []byte) *User {
+	for _, a := range s {
+		if bytes.Equal(a.IDM, idm) {
+			return &a
+		}
+	}
+	return nil
+}
+
 func Exists(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil

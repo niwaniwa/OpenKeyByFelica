@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -71,10 +72,35 @@ func main() {
 		}
 
 		if Contains(userData, idm) {
+			target := findUser(userData, idm)
 			if isOpenKey {
 				CloseKey()
+
+				postDiscord(DiscordWebhookBody{
+					UserName:  userName,
+					AvatarURL: avatarURL,
+					Content:   "",
+					Embeds: []Embed{
+						{
+							Title:       closeMessage,
+							Description: strings.ReplaceAll(closeDescriptionMessage, "%user_name%", target.Name),
+						},
+					},
+				})
 			} else {
 				OpenKey()
+
+				postDiscord(DiscordWebhookBody{
+					UserName:  userName,
+					AvatarURL: avatarURL,
+					Content:   "",
+					Embeds: []Embed{
+						{
+							Title:       openMessage,
+							Description: strings.ReplaceAll(descriptionMessage, "%user_name%", target.Name),
+						},
+					},
+				})
 			}
 		}
 
@@ -146,17 +172,6 @@ func OpenKey() {
 	}()
 	isOpenKey = true
 
-	postDiscord(DiscordWebhookBody{
-		UserName:  userName,
-		AvatarURL: avatarURL,
-		Content:   "",
-		Embeds: []Embed{
-			{
-				Title:       openMessage,
-				Description: descriptionMessage,
-			},
-		},
-	})
 }
 
 func CloseKey() {
@@ -173,18 +188,6 @@ func CloseKey() {
 		manageMosPin.Low()
 	}()
 	isOpenKey = false
-
-	postDiscord(DiscordWebhookBody{
-		UserName:  userName,
-		AvatarURL: avatarURL,
-		Content:   "",
-		Embeds: []Embed{
-			{
-				Title:       closeMessage,
-				Description: closeDescriptionMessage,
-			},
-		},
-	})
 }
 
 func initializeRestApiServer() {
@@ -216,6 +219,19 @@ func checkDoorState() {
 						if isOpenKey {
 							CloseKey()
 							log.Println(":: Closed Door")
+
+							postDiscord(DiscordWebhookBody{
+								UserName:  userName,
+								AvatarURL: avatarURL,
+								Content:   "",
+								Embeds: []Embed{
+									{
+										Title:       openMessage,
+										Description: strings.ReplaceAll(descriptionMessage, "%user_name%", "🤖 (自動)"),
+									},
+								},
+							})
+
 						}
 					}
 				})
