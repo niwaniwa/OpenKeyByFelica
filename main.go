@@ -234,7 +234,7 @@ func loadEnvironments() {
 
 	webhookURL = os.Getenv("webhook_url")
 	userName = os.Getenv("username")
-	userName = os.Getenv("avatar_url")
+	avatarURL = os.Getenv("avatar_url")
 	openMessage = os.Getenv("open_message")
 	closeMessage = os.Getenv("close_message")
 	openDescriptionMessage = os.Getenv("open_description_message")
