@@ -51,4 +51,9 @@ func postDiscord(content DiscordWebhookBody) {
 		return
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		log.Println("Message with embed sent successfully!")
+	} else {
+		log.Println("Failed to send message with status:", resp.Status)
+	}
 }

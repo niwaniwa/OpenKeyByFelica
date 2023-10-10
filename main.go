@@ -173,6 +173,18 @@ func CloseKey() {
 		manageMosPin.Low()
 	}()
 	isOpenKey = false
+
+	postDiscord(DiscordWebhookBody{
+		UserName:  userName,
+		AvatarURL: avatarURL,
+		Content:   "",
+		Embeds: []Embed{
+			{
+				Title:       closeMessage,
+				Description: closeDescriptionMessage,
+			},
+		},
+	})
 }
 
 func initializeRestApiServer() {
