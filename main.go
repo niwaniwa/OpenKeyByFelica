@@ -97,7 +97,7 @@ func main() {
 					Embeds: []Embed{
 						{
 							Title:       openMessage,
-							Description: strings.ReplaceAll(descriptionMessage, "%user_name%", target.Name),
+							Description: strings.ReplaceAll(openDescriptionMessage, "%user_name%", target.Name),
 						},
 					},
 				})
