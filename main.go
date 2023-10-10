@@ -5,6 +5,7 @@ import (
 	"github.com/bamchoh/pasori"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"github.com/stianeikeland/go-rpio/v4"
 	"log"
 	"net/http"
@@ -121,6 +122,9 @@ func initialize() {
 
 	fmt.Println("-: -: END IDM Read setup")
 
+	fmt.Println("-: -: Load environments...")
+	loadEnvironments()
+
 }
 
 func OpenKey() {
@@ -141,6 +145,18 @@ func OpenKey() {
 		manageMosPin.Low()
 	}()
 	isOpenKey = true
+
+	postDiscord(DiscordWebhookBody{
+		UserName:  userName,
+		AvatarURL: avatarURL,
+		Content:   "",
+		Embeds: []Embed{
+			{
+				Title:       openMessage,
+				Description: descriptionMessage,
+			},
+		},
+	})
 }
 
 func CloseKey() {
@@ -195,4 +211,20 @@ func checkDoorState() {
 		}
 		time.Sleep(1 * time.Second)
 	}
+}
+
+func loadEnvironments() {
+	err := godotenv.Load("settings.env")
+
+	if err != nil {
+		panic(err)
+	}
+
+	webhookURL = os.Getenv("webhook_url")
+	userName = os.Getenv("username")
+	userName = os.Getenv("avatar_url")
+	openMessage = os.Getenv("open_message")
+	closeMessage = os.Getenv("close_message")
+	openDescriptionMessage = os.Getenv("open_description_message")
+	closeDescriptionMessage = os.Getenv("close_description_message")
 }
