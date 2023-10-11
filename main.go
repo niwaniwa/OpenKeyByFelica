@@ -82,11 +82,12 @@ func main() {
 					Content:   "",
 					Embeds: []Embed{
 						{
-							Title:       closeMessage,
+							Title:       strings.ReplaceAll(closeMessage, "%user_name%", target.Name),
 							Description: strings.ReplaceAll(closeDescriptionMessage, "%user_name%", target.Name),
 						},
 					},
 				})
+
 			} else {
 				OpenKey()
 
@@ -96,7 +97,7 @@ func main() {
 					Content:   "",
 					Embeds: []Embed{
 						{
-							Title:       openMessage,
+							Title:       strings.ReplaceAll(closeMessage, "%user_name%", target.Name),
 							Description: strings.ReplaceAll(openDescriptionMessage, "%user_name%", target.Name),
 						},
 					},
