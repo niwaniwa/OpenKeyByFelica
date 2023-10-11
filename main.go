@@ -98,7 +98,7 @@ func main() {
 					Content:   "",
 					Embeds: []Embed{
 						{
-							Title:       ConvertMessage(closeMessage, target.Name),
+							Title:       ConvertMessage(openMessage, target.Name),
 							Description: ConvertMessage(openDescriptionMessage, target.Name),
 						},
 					},
