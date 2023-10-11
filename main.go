@@ -73,6 +73,7 @@ func main() {
 
 		if Contains(userData, idm) {
 			target := findUser(userData, idm)
+			log.Println(target.StNum)
 			if isOpenKey {
 				CloseKey()
 
@@ -82,8 +83,8 @@ func main() {
 					Content:   "",
 					Embeds: []Embed{
 						{
-							Title:       strings.ReplaceAll(closeMessage, "%user_name%", target.Name),
-							Description: strings.ReplaceAll(closeDescriptionMessage, "%user_name%", target.Name),
+							Title:       ConvertMessage(closeMessage, target.StNum),
+							Description: ConvertMessage(openDescriptionMessage, target.StNum),
 						},
 					},
 				})
@@ -97,8 +98,8 @@ func main() {
 					Content:   "",
 					Embeds: []Embed{
 						{
-							Title:       strings.ReplaceAll(closeMessage, "%user_name%", target.Name),
-							Description: strings.ReplaceAll(openDescriptionMessage, "%user_name%", target.Name),
+							Title:       ConvertMessage(closeMessage, target.Name),
+							Description: ConvertMessage(openDescriptionMessage, target.Name),
 						},
 					},
 				})
@@ -227,8 +228,8 @@ func checkDoorState() {
 								Content:   "",
 								Embeds: []Embed{
 									{
-										Title:       openMessage,
-										Description: strings.ReplaceAll(descriptionMessage, "%user_name%", "🤖 (自動)"),
+										Title:       ConvertMessage(closeMessage, "🤖 自動"),
+										Description: ConvertMessage(openDescriptionMessage, "🤖 自動"),
 									},
 								},
 							})
@@ -256,4 +257,11 @@ func loadEnvironments() {
 	closeMessage = os.Getenv("close_message")
 	openDescriptionMessage = os.Getenv("open_description_message")
 	closeDescriptionMessage = os.Getenv("close_description_message")
+}
+
+func ConvertMessage(message string, userName string) string {
+	result := message
+	result = strings.ReplaceAll(result, "%user_name%", userName)
+	result = strings.ReplaceAll(result, "%date%", time.Now().String())
+	return result
 }
