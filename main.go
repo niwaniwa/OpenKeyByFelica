@@ -206,7 +206,7 @@ func getUser(c *gin.Context) {
 
 func postUser(c *gin.Context) {
 	isRegister = true
-	tempName = c.Params.ByName("name")
+	tempName = c.PostForm("name")
 	c.IndentedJSON(http.StatusOK, tempName)
 }
 
@@ -228,8 +228,8 @@ func checkDoorState() {
 								Content:   "",
 								Embeds: []Embed{
 									{
-										Title:       ConvertMessage(closeMessage, "🤖 自動"),
-										Description: ConvertMessage(openDescriptionMessage, "🤖 自動"),
+										Title:       ConvertMessage(closeMessage, "🤖 (自動)"),
+										Description: ConvertMessage(openDescriptionMessage, "🤖 (自動)"),
 									},
 								},
 							})
@@ -262,6 +262,6 @@ func loadEnvironments() {
 func ConvertMessage(message string, userName string) string {
 	result := message
 	result = strings.ReplaceAll(result, "%user_name%", userName)
-	result = strings.ReplaceAll(result, "%date%", time.Now().String())
+	result = strings.ReplaceAll(result, "%date%", time.Now().Format("2006年01月02日 15:04:05"))
 	return result
 }
