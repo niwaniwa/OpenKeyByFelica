@@ -107,6 +107,29 @@ func findUser(s []User, idm []byte) *User {
 	return nil
 }
 
+func RemoveUser(idm []byte) error {
+	var indexToRemove int = -1
+	for i, user := range userData {
+		if bytes.Equal(user.IDM, idm) {
+			indexToRemove = i
+			break
+		}
+	}
+
+	if indexToRemove == -1 {
+		return fmt.Errorf("User with specified IDM not found")
+	}
+
+	err := os.Remove(rootPath + userData[indexToRemove].ID + ".json")
+	if err != nil {
+		return err
+	}
+
+	userData = append(userData[:indexToRemove], userData[indexToRemove+1:]...)
+
+	return nil
+}
+
 func Exists(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil
